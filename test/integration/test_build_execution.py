@@ -79,7 +79,7 @@ def new_environment(request):
 
 @pytest.fixture(scope='function')
 def new_config(request, new_environment, new_project):
-    logger.info("creating a new bc")
+    print("creating a new bc")
     created_bc = configs_api.create_new(
         body=buildconfigurations.create_build_conf_object(
             name=testutils.gen_random_name() + '-config-build-exec-test',
@@ -89,7 +89,7 @@ def new_config(request, new_environment, new_project):
             product_version_ids=[1],
             scm_repo_url='https://github.com/project-ncl/pnc-simple-test-project.git',
             scm_revision='1.0')).content
-    logger.info("i am done creating a bc")
+    print("i am done creating a bc")
     def teardown():
         buildconfigurations.delete_build_configuration(id=created_bc.id)
     request.addfinalizer(teardown)
@@ -109,12 +109,12 @@ def new_set(request):
 def test_run_single_build(new_config):
     """ Run a single build configuration defined by the 'new_config' method
     and verify the build output """
-    logger.info("i am starting to run")
+    print("i am starting to run")
     assert(new_config is not None, 'Unable to create build configuration')
 
-    logger.info("triggering build yo")
+    print("triggering build yo")
     triggered_build = configs_api.trigger(id=new_config.id).content
-    logger.info("done triggering build yo")
+    print("done triggering build yo")
     assert(triggered_build is not None, 'Unable to start build')
 
     logger.info("Build %s is running...", triggered_build.id)
@@ -122,12 +122,12 @@ def test_run_single_build(new_config):
         if not running_api.get_all_for_bc(id=new_config.id).content:
             break
         time.sleep(5)
-        logger.info("build still building yo")
+        print("build still building yo")
     logger.info("Build %s is done!", triggered_build.id)
 
-    logger.info("get information on build record stuff")
+    print("get information on build record stuff")
     build_record = records_api.get_specific(triggered_build.id).content
-    logger.info("check stuff yo")
+    print("check stuff yo")
     build_record_checks(build_record)
 
 @pytest.mark.skip(reason="diagnose jenkins hanging")

@@ -103,13 +103,15 @@ def new_set(request):
     return set
 
 
-@pytest.mark.skip(reason="diagnose jenkins hanging")
+# @pytest.mark.skip(reason="diagnose jenkins hanging")
 def test_run_single_build(new_config):
     """ Run a single build configuration defined by the 'new_config' method
     and verify the build output """
     assert(new_config is not None, 'Unable to create build configuration')
 
+    logger.info("triggering build yo")
     triggered_build = configs_api.trigger(id=new_config.id).content
+    logger.info("done triggering build yo")
     assert(triggered_build is not None, 'Unable to start build')
 
     logger.info("Build %s is running...", triggered_build.id)
@@ -117,9 +119,12 @@ def test_run_single_build(new_config):
         if not running_api.get_all_for_bc(id=new_config.id).content:
             break
         time.sleep(5)
+        logger.info("build still building yo")
     logger.info("Build %s is done!", triggered_build.id)
 
+    logger.info("get information on build record stuff")
     build_record = records_api.get_specific(triggered_build.id).content
+    logger.info("check stuff yo")
     build_record_checks(build_record)
 
 @pytest.mark.skip(reason="diagnose jenkins hanging")
@@ -208,6 +213,3 @@ def check_pom_for_redhat_version_update(diff):
     """Check the POM file diff for the redhat version update"""
     search = POM_VERSION_UPDATE_REGEX.search(diff)
     return (search is not None)
-
-
-

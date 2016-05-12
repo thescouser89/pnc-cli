@@ -79,6 +79,7 @@ def new_environment(request):
 
 @pytest.fixture(scope='function')
 def new_config(request, new_environment, new_project):
+    logger.info("creating a new bc")
     created_bc = configs_api.create_new(
         body=buildconfigurations.create_build_conf_object(
             name=testutils.gen_random_name() + '-config-build-exec-test',
@@ -88,6 +89,7 @@ def new_config(request, new_environment, new_project):
             product_version_ids=[1],
             scm_repo_url='https://github.com/project-ncl/pnc-simple-test-project.git',
             scm_revision='1.0')).content
+    logger.info("i am done creating a bc")
     def teardown():
         buildconfigurations.delete_build_configuration(id=created_bc.id)
     request.addfinalizer(teardown)
@@ -107,6 +109,7 @@ def new_set(request):
 def test_run_single_build(new_config):
     """ Run a single build configuration defined by the 'new_config' method
     and verify the build output """
+    logger.info("i am starting to run")
     assert(new_config is not None, 'Unable to create build configuration')
 
     logger.info("triggering build yo")

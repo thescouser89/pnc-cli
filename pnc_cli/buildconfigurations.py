@@ -204,6 +204,7 @@ def delete_build_configuration(id=None, name=None):
 @arg("-pvi", "--product-version-id", help="Associated ProductVersion ID.")
 @arg("-dids", "--dependency-ids", type=int, nargs="+",
      help="List of BuildConfiguration IDs that are dependencies of this BuildConfiguration.")
+@arg("--build_type", type=str, default='MVN', choices=['MVN', 'NPM'])
 # @arg("-bcsid", "--")
 def create_build_configuration(**kwargs):
     data = create_build_configuration_raw(**kwargs)

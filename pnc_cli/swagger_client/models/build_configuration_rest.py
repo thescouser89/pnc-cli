@@ -48,6 +48,7 @@ class BuildConfigurationRest(object):
             'last_modification_time': 'datetime',
             'archived': 'bool',
             'project': 'ProjectRest',
+            'build_type': 'str',
             'environment': 'BuildEnvironmentRest',
             'dependency_ids': 'list[int]',
             'product_version_id': 'int',
@@ -66,6 +67,7 @@ class BuildConfigurationRest(object):
             'last_modification_time': 'lastModificationTime',
             'archived': 'archived',
             'project': 'project',
+            'build_type': 'buildType',
             'environment': 'environment',
             'dependency_ids': 'dependencyIds',
             'product_version_id': 'productVersionId',
@@ -83,6 +85,7 @@ class BuildConfigurationRest(object):
         self._last_modification_time = None
         self._archived = None
         self._project = None
+        self._build_type = None
         self._environment = None
         self._dependency_ids = None
         self._product_version_id = None
@@ -308,6 +311,34 @@ class BuildConfigurationRest(object):
         :type: ProjectRest
         """
         self._project = project
+
+    @property
+    def build_type(self):
+        """
+        Gets the build_type of this BuildConfigurationRest.
+
+
+        :return: The build_type of this BuildConfigurationRest.
+        :rtype: str
+        """
+        return self._build_type
+
+    @build_type.setter
+    def build_type(self, build_type):
+        """
+        Sets the build_type of this BuildConfigurationRest.
+
+
+        :param build_type: The build_type of this BuildConfigurationRest.
+        :type: str
+        """
+        allowed_values = ["MVN", "NPM"]
+        if build_type not in allowed_values:
+            raise ValueError(
+                "Invalid value for `build_type`, must be one of {0}"
+                .format(allowed_values)
+            )
+        self._build_type = build_type
 
     @property
     def environment(self):

@@ -31,19 +31,20 @@ from pnc_cli.tools.config_utils import ConfigReader
  Example: --look-up-only jdg-infinispan
  Will look up jdg-infinispan section and process a look up of BC by name (jdg-infinispan-${version_field}.
 """)
+@arg('--build-type', default='MVN', choices=['MVN', 'NPM'])
 def make_mead(config=None, run_build=False, environment=1, sufix="", product_name=None, product_version=None,
-              look_up_only=""):
+              look_up_only="", build_type):
     """
     Create Build group based on Make-Mead configuration file
     :param config: Make Mead config name
     :return:
     """
-    ret=make_mead_impl(config, run_build, environment, sufix, product_name, product_version, look_up_only)
+    ret=make_mead_impl(config, run_build, environment, sufix, product_name, product_version, look_up_only, build_type)
     if type(ret) == int and ret != 0:
         sys.exit(ret)
     return ret
 
-def make_mead_impl(config, run_build, environment, sufix, product_name, product_version, look_up_only):
+def make_mead_impl(config, run_build, environment, sufix, product_name, product_version, look_up_only, build_type):
     if not validate_input_parameters(config, product_name, product_version):
         return 1
 
@@ -137,7 +138,7 @@ def make_mead_impl(config, run_build, environment, sufix, product_name, product_
             if build_config == None:
                 logging.debug('No build config with name ' + artifact_name)
                 build_config = create_build_configuration(env, bc_set, product_version_id, art_params, scm_repo_url,
-                                                          scm_revision, artifact_name, project)
+                                                          scm_revision, artifact_name, project, build_type)
             else:
                 build_config = update_build_configuration(env, product_version_id, art_params, scm_repo_url,
                                                               scm_revision, artifact_name, project)
@@ -271,7 +272,7 @@ def update_build_configuration(environment, product_version_id, art_params, scm_
     return buildconfigurations.get_build_configuration(id=build_config.id)
 
 def create_build_configuration(environment, bc_set, product_version_id, art_params, scm_repo_url,
-                               scm_revision, artifact_name, project):
+                               scm_revision, artifact_name, project, build_type):
 
     scm_repo_url_no_git_ext = _remove_git_ext(scm_repo_url)
 
@@ -291,13 +292,13 @@ def create_build_configuration(environment, bc_set, product_version_id, art_para
 
     if repo is None:
         return create_build_configuration_and_repo(environment, bc_set, product_version_id,
-                               art_params, scm_repo_url, scm_revision, artifact_name, project)
+                               art_params, scm_repo_url, scm_revision, artifact_name, project, build_type)
     else:
         return create_build_configuration_with_repo(environment, bc_set, product_version_id,
                                art_params, repo, scm_revision, artifact_name, project)
 
 def create_build_configuration_with_repo(environment, bc_set, product_version_id, art_params,
-                                         repository, scm_revision, artifact_name, project):
+                                         repository, scm_revision, artifact_name, project, build_type):
     buildconfigurations.create_build_configuration(
                                                    name=artifact_name,
                                                    project=project.id,
@@ -306,7 +307,8 @@ def create_build_configuration_with_repo(environment, bc_set, product_version_id
                                                    scm_revision=scm_revision,
                                                    build_script=get_maven_options(art_params),
                                                    product_version_id=product_version_id,
-                                                   generic_parameters=get_generic_parameters(art_params))
+                                                   generic_parameters=get_generic_parameters(art_params),
+                                                   build_type=build_type)
     build_config = get_build_configuration_by_name(artifact_name)
     if build_config == None:
         logging.error("Creation of Build Configuration failed.")

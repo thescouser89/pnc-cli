@@ -5,7 +5,7 @@ README = open(os.path.join(os.path.dirname(__file__), 'README.md')).read()
 setup(
     name='pnc-cli',
     packages=find_packages(exclude=['test*']),
-    version='1.3.0',
+    version='1.4.0',
     description='CLI for the Project Newcastle build system',
     author = 'Tom Hauser',
     author_email = 'thauser@redhat.com',

@@ -31,7 +31,7 @@ from pnc_cli.tools.config_utils import ConfigReader
  Example: --look-up-only jdg-infinispan
  Will look up jdg-infinispan section and process a look up of BC by name (jdg-infinispan-${version_field}.
 """)
-@arg('--build-type', default='MVN', choices=['MVN', 'NPM'])
+@arg('--build_type', default='MVN', choices=['MVN', 'NPM'])
 def make_mead(config=None, run_build=False, environment=1, sufix="", product_name=None, product_version=None,
               look_up_only="", build_type):
     """
